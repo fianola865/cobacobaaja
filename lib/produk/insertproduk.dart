@@ -2,29 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ukk_2025/homepage.dart';
 
-class InsertUser extends StatefulWidget {
-  const InsertUser({super.key});
+class InsertProduk extends StatefulWidget {
+  const InsertProduk({super.key});
 
   @override
-  State<InsertUser> createState() => _InsertUserState();
+  State<InsertProduk> createState() => _InsertProdukState();
 }
 
-class _InsertUserState extends State<InsertUser> {
-  final _usr = TextEditingController();
-  final _pw = TextEditingController();
-  final _role = TextEditingController();
+class _InsertProdukState extends State<InsertProduk> {
+  final _nmp = TextEditingController();
+  final _hrg = TextEditingController();
+  final _stk = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> insertUser() async {
+  Future<void> InsertProduk() async {
     if (_formKey.currentState!.validate()) {
-      final username = _usr.text.trim();
-      final password = _pw.text.trim();
-      final role = _role.text.trim();
+      final nmp = _nmp.text.trim();
+      final hrg = _hrg.text.trim();
+      final stk = _stk.text.trim();
 
-      await Supabase.instance.client.from('user').insert({
-        'Username': username,
-        'Password': password,
-        'Role': role
+      await Supabase.instance.client.from('produk').insert({
+        'NamaProduk': nmp,
+        'Harga': hrg,
+        'Stok': stk
       });
 
       
@@ -40,7 +40,7 @@ class _InsertUserState extends State<InsertUser> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tambah User'),
+        title: Text('Tambah Produk'),
 
       ),
       body: Container(
@@ -51,58 +51,63 @@ class _InsertUserState extends State<InsertUser> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               TextFormField(
-                controller: _usr,
+                controller: _nmp,
                 decoration: InputDecoration(
-                  labelText: 'Username',
+                  labelText: 'Nama Produk',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Username tidak boleh kosong';
+                    return 'tidak boleh kosong';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: _pw,
+                controller: _hrg,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: 'Password',
+                  labelText: 'Harga',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Password tidak boleh kosong';
+                    return 'tidak boleh kosong';
+                  }
+                  if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                    return 'Harus berupa angka';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: _role,
+                controller: _stk,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: 'Role',
+                  labelText: 'Stok',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Role tidak boleh kosong';
+                    return 'tidak boleh kosong';
                   }
-                  if (value != 'admin' && value != 'petugas') {
-                    return 'Role hanya boleh admin atau petugas';
+                  if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                    return 'Harus berupa angka';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: insertUser,
+                onPressed: InsertProduk,
                 child: const Text('Tambah'),
               ),
             ],

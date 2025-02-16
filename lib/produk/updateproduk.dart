@@ -2,44 +2,44 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ukk_2025/homepage.dart';
 
-class UpdateUser extends StatefulWidget {
-  final int UserID;
-  const UpdateUser({super.key, required this.UserID});
+class UpdateProduk extends StatefulWidget {
+  final int ProdukID;
+  const UpdateProduk({super.key, required this.ProdukID});
 
   @override
-  State<UpdateUser> createState() => _UpdateUserState();
+  State<UpdateProduk> createState() => _UpdateProdukState();
 }
 
-class _UpdateUserState extends State<UpdateUser> {
-  final _usr = TextEditingController();
-  final _pw = TextEditingController();
-  final _role = TextEditingController();
+class _UpdateProdukState extends State<UpdateProduk> {
+  final _nmp = TextEditingController();
+  final _hrg = TextEditingController();
+  final _stk = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    tampiluser();
+    TampilProduk();
   }
 
-  Future<void> tampiluser() async{
+  Future<void> TampilProduk() async{
 
-    final data = await Supabase.instance.client.from('user').select().eq('UserID', widget.UserID).single();
+    final data = await Supabase.instance.client.from('produk').select().eq('ProdukID', widget.ProdukID).single();
     setState(() {
-      _usr.text = data['Username'] ?? '';
-      _pw.text = data['Password'] ?? '';
-      _role.text = data['Role'] ?? '';
+      _nmp.text = data['NamaProduk'] ?? '';
+      _hrg.text = data['Harga'] ?? '';
+      _stk.text = data['Stok'] ?? '';
     });
   }
 
-  Future<void> updateuser() async{
+  Future<void> UpdateProduk() async{
     if(_formKey.currentState!.validate()){
-      await Supabase.instance.client.from('user').update({
-      'Username': _usr.text.trim(),
-      'Password': _pw.text.trim(),
-      'Role': _role.text.trim(),
-    }).eq('UserID', widget.UserID);
+      await Supabase.instance.client.from('produk').update({
+      'NamaProduk': _nmp.text.trim(),
+      'Harga': _hrg.text.trim(),
+      'Stok': _stk.text.trim(),
+    }).eq('ProdukID', widget.ProdukID);
     
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Homepage()));
     
@@ -50,7 +50,7 @@ class _UpdateUserState extends State<UpdateUser> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update User'),
+        title: Text('Update Produk'),
       ),
       body: Container(
         padding: EdgeInsets.all(16),
@@ -60,9 +60,9 @@ class _UpdateUserState extends State<UpdateUser> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               TextFormField(
-                controller: _usr,
+                controller: _nmp,
                 decoration: InputDecoration(
-                  labelText:'Username',
+                  labelText:'Nama Produk',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8)
                   ) 
@@ -76,9 +76,10 @@ class _UpdateUserState extends State<UpdateUser> {
               ),
               SizedBox(height: 16),
               TextFormField(
-                controller: _pw,
+                controller: _hrg,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText:'Password',
+                  labelText:'Harga',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8)
                   ) 
@@ -87,30 +88,34 @@ class _UpdateUserState extends State<UpdateUser> {
                   if(value == null || value.isEmpty){
                     return 'tidak boleh kosong';
                   }
+                  if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                    return 'Harus berupa angka';
+                  }
                   return null;
                 },
               ),
               SizedBox(height: 16),
               TextFormField(
-                controller: _role,
+                controller: _stk,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText:'Role',
+                  labelText:'Stok',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8)
                   ),
                 ),
                 validator: (value) {
-                  if(value != 'petugas' && value != 'admin'){
-                    return 'Hanya bole admin dan petugas';
-                  }
                   if(value == null || value.isEmpty){
                     return 'tidak boleh kosong';
+                  }
+                  if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                    return 'Harus berupa angka';
                   }
                   return null;
                 },
               ),
               SizedBox(height: 16),
-              ElevatedButton(onPressed: updateuser, child: Text('update'))
+              ElevatedButton(onPressed: UpdateProduk, child: Text('update'))
             ],
           )
         ),

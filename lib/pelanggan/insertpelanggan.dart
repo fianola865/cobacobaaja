@@ -2,29 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ukk_2025/homepage.dart';
 
-class InsertUser extends StatefulWidget {
-  const InsertUser({super.key});
+class InsertPelanggan extends StatefulWidget {
+  const InsertPelanggan({super.key});
 
   @override
-  State<InsertUser> createState() => _InsertUserState();
+  State<InsertPelanggan> createState() => _InsertPelangganState();
 }
 
-class _InsertUserState extends State<InsertUser> {
-  final _usr = TextEditingController();
-  final _pw = TextEditingController();
-  final _role = TextEditingController();
+class _InsertPelangganState extends State<InsertPelanggan> {
+  final _np = TextEditingController();
+  final _alm = TextEditingController();
+  final _nmt = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> insertUser() async {
+  Future<void> InsertPelanggan() async {
     if (_formKey.currentState!.validate()) {
-      final username = _usr.text.trim();
-      final password = _pw.text.trim();
-      final role = _role.text.trim();
+      final np = _np.text.trim();
+      final alm = _alm.text.trim();
+      final nmt = _nmt.text.trim();
 
       await Supabase.instance.client.from('user').insert({
-        'Username': username,
-        'Password': password,
-        'Role': role
+        'NamaPelanggan': np,
+        'Alamat': alm,
+        'NomorTelepon': nmt
       });
 
       
@@ -51,58 +51,56 @@ class _InsertUserState extends State<InsertUser> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               TextFormField(
-                controller: _usr,
+                controller: _np,
                 decoration: InputDecoration(
-                  labelText: 'Username',
+                  labelText: 'Nama Pelanggan',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Username tidak boleh kosong';
+                    return 'tidak boleh kosong';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: _pw,
+                controller: _alm,
                 decoration: InputDecoration(
-                  labelText: 'Password',
+                  labelText: 'Alamat',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Password tidak boleh kosong';
+                    return 'tidak boleh kosong';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: _role,
+                controller: _nmt,
+                keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
-                  labelText: 'Role',
+                  labelText: 'Nomor Telepon',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Role tidak boleh kosong';
-                  }
-                  if (value != 'admin' && value != 'petugas') {
-                    return 'Role hanya boleh admin atau petugas';
+                    return 'tidak boleh kosong';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: insertUser,
+                onPressed: InsertPelanggan,
                 child: const Text('Tambah'),
               ),
             ],

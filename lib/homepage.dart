@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ukk_2025/detail/indexdetail.dart';
+import 'package:ukk_2025/pelanggan/indexpelanggan.dart';
+import 'package:ukk_2025/penjualan/indexpenjualan.dart';
+import 'package:ukk_2025/produk/indexproduk.dart';
 import 'package:ukk_2025/user/indexuser.dart';
 
 class Homepage extends StatefulWidget {
@@ -25,10 +29,10 @@ class _HomepageState extends State<Homepage> {
       ),
       body: TabBarView(children: [
         UserTab(),
-        Center(child: Text('user')),
-        Center(child: Text('user')),
-        Center(child: Text('user')),
-        Center(child: Text('user')),
+        PelangganTab(),
+        ProdukTap(),
+        PenjualanTab(),
+        DetailTab(),
       ],),
     )
     );
