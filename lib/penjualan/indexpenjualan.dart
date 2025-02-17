@@ -10,9 +10,9 @@ class PenjualanTab extends StatefulWidget {
 }
 
 class _PenjualanTabState extends State<PenjualanTab> {
-  List<Map<String, dynamic>> penjualan = [];
+  List<Map<String, dynamic>> Penjualan = [];
   bool isLoading = true;
-
+ 
   @override
   void initState() {
     super.initState();
@@ -23,72 +23,77 @@ class _PenjualanTabState extends State<PenjualanTab> {
     setState(() {
       isLoading = true;
     });
-
-    final response = await Supabase.instance.client
-        .from('penjualan')
-        .select('*, pelanggan(*)');
-
-    setState(() {
-      penjualan = List<Map<String, dynamic>>.from(response);
-      isLoading = false;
-    });
+    try {
+      final response =
+          await Supabase.instance.client.from('penjualan').select('*, pelanggan(*)');
+      setState(() {
+        Penjualan = List<Map<String, dynamic>>.from(response);
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: isLoading
           ? Center(
               child: LoadingAnimationWidget.twoRotatingArc(
                   color: Colors.grey, size: 30),
             )
-          : penjualan.isEmpty
-              ? const Center(
-                  child: Text(
-                    'Penjualan belum ditambahkan',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.all(8),
-                  itemCount: penjualan.length,
-                  itemBuilder: (context, index) {
-                    final pjl = penjualan[index];
-                    return Card(
-                      elevation: 4,
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                      child: SizedBox(
-                        height: 180,
-                        child: Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Nama Pelanggan: ${pjl['pelanggan']?['NamaPelanggan'] ?? 'Tidak tersedia'}',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Tanggal Penjualan: ${pjl['TanggalPenjualan'] ?? 'Tidak tersedia'}',
-                                style: const TextStyle(fontSize: 18),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Total Harga: ${pjl['TotalHarga'] ?? 'Tidak tersedia'}',
-                                style: const TextStyle(fontSize: 18),
-                              ),
-                            ],
+          : Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    padding: EdgeInsets.all(8),
+                    itemCount: Penjualan.length,
+                    itemBuilder: (context, index) {
+                      final pjl = Penjualan[index];
+                      return Card(
+                        elevation: 4,
+                        margin: EdgeInsets.symmetric(vertical: 8),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        child: SizedBox(
+                          height: 200,
+                          child: Padding(
+                            padding: EdgeInsets.all(12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Nama Pelanggan: ${pjl['pelanggan']['NamaPelanggan'] ?? 'tidak tersedia'}',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold, fontSize: 18),
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  'Tanggal Penjualan: ${pjl['TanggalPenjualan'] ?? 'tidak tersedia'}',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  'Total Harga: ${pjl['TotalHarga'] ?? 'tidak tersedia'}',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
+              ],
+            ),
     );
   }
 }
+ 

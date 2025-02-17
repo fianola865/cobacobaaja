@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart'; 
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:ukk_2025/produk/harga.dart';
 import 'package:ukk_2025/produk/insertproduk.dart';
 import 'package:ukk_2025/produk/updateproduk.dart';
 
@@ -20,6 +21,11 @@ class _ProdukTapState extends State<ProdukTap> {
   @override
   void initState() {
     super.initState();
+    fetchproduk();
+  }
+
+  Future<void> deleteproduk(int id) async{
+    await Supabase.instance.client.from('produk').delete().eq('UserID', id);
     fetchproduk();
   }
 
@@ -79,7 +85,11 @@ class _ProdukTapState extends State<ProdukTap> {
               itemCount: filteredProduk.length,
               itemBuilder: (context, index) {
                 final prd = filteredProduk[index];
-                return Card(
+                return InkWell(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => harga(produk: prd)));
+                  },
+                child: Card(
                   elevation: 4,
                   margin: EdgeInsets.symmetric(vertical: 8),
                   shape: RoundedRectangleBorder(
@@ -108,7 +118,7 @@ class _ProdukTapState extends State<ProdukTap> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
+                                  builder: (context) => 
                                       UpdateProduk(ProdukID: ProdukID),
                                 ),
                               );
@@ -118,12 +128,13 @@ class _ProdukTapState extends State<ProdukTap> {
                         IconButton(
                           icon: Icon(Icons.delete, color: Colors.red),
                           onPressed: () {
-                            // Hapus produk
+                            deleteproduk(prd['ProdukID']);
                           },
                         ),
                       ],
                     ),
                   ),
+                )
                 );
               },
             ),
