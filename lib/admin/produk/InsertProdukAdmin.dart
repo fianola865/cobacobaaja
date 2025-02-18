@@ -1,36 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:ukk_2025/homepage.dart';
+import 'package:ukk_2025/admin/homepageadmin.dart';
 
-class InsertPelanggan extends StatefulWidget {
-  const InsertPelanggan({super.key});
+class InsertProdukAdminAdmin extends StatefulWidget {
+  const InsertProdukAdminAdmin({super.key});
 
   @override
-  State<InsertPelanggan> createState() => _InsertPelangganState();
+  State<InsertProdukAdminAdmin> createState() => _InsertProdukAdminAdminState();
 }
 
-class _InsertPelangganState extends State<InsertPelanggan> {
-  final _np = TextEditingController();
-  final _alm = TextEditingController();
-  final _nmt = TextEditingController();
+class _InsertProdukAdminAdminState extends State<InsertProdukAdminAdmin> {
+  final _nmp = TextEditingController();
+  final _hrg = TextEditingController();
+  final _stk = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> InsertPelanggan() async {
+  Future<void> InsertProdukAdminAdmin() async {
     if (_formKey.currentState!.validate()) {
-      final np = _np.text.trim();
-      final alm = _alm.text.trim();
-      final nmt = _nmt.text.trim();
+      final nmp = _nmp.text.trim();
+      final hrg = _hrg.text.trim();
+      final stk = _stk.text.trim();
 
-      await Supabase.instance.client.from('user').insert({
-        'NamaPelanggan': np,
-        'Alamat': alm,
-        'NomorTelepon': nmt
+      await Supabase.instance.client.from('produk').insert({
+        'NamaProduk': nmp,
+        'Harga': hrg,
+        'Stok': stk
       });
 
       
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const Homepage()));
+          MaterialPageRoute(builder: (context) => const HomePageAdmin()));
        
       
     }
@@ -40,7 +40,7 @@ class _InsertPelangganState extends State<InsertPelanggan> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tambah User'),
+        title: Text('Tambah Produk'),
 
       ),
       body: Container(
@@ -51,9 +51,9 @@ class _InsertPelangganState extends State<InsertPelanggan> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               TextFormField(
-                controller: _np,
+                controller: _nmp,
                 decoration: InputDecoration(
-                  labelText: 'Nama Pelanggan',
+                  labelText: 'Nama Produk',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -67,9 +67,10 @@ class _InsertPelangganState extends State<InsertPelanggan> {
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: _alm,
+                controller: _hrg,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: 'Alamat',
+                  labelText: 'Harga',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -78,15 +79,18 @@ class _InsertPelangganState extends State<InsertPelanggan> {
                   if (value == null || value.isEmpty) {
                     return 'tidak boleh kosong';
                   }
+                  if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                    return 'Harus berupa angka';
+                  }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: _nmt,
-                keyboardType: TextInputType.phone,
+                controller: _stk,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: 'Nomor Telepon',
+                  labelText: 'Stok',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -94,13 +98,16 @@ class _InsertPelangganState extends State<InsertPelanggan> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'tidak boleh kosong';
+                  }
+                  if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                    return 'Harus berupa angka';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: InsertPelanggan,
+                onPressed: InsertProdukAdminAdmin,
                 child: const Text('Tambah'),
               ),
             ],

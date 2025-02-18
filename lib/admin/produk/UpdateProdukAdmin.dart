@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:ukk_2025/homepage.dart';
+import 'package:ukk_2025/admin/homepageadmin.dart';
 
-class UpdateProduk extends StatefulWidget {
+class UpdateProdukAdmin extends StatefulWidget {
   final int ProdukID;
-  const UpdateProduk({super.key, required this.ProdukID});
+  const UpdateProdukAdmin({super.key, required this.ProdukID});
 
   @override
-  State<UpdateProduk> createState() => _UpdateProdukState();
+  State<UpdateProdukAdmin> createState() => _UpdateProdukAdminState();
 }
 
-class _UpdateProdukState extends State<UpdateProduk> {
+class _UpdateProdukAdminState extends State<UpdateProdukAdmin> {
   final _nmp = TextEditingController();
   final _hrg = TextEditingController();
   final _stk = TextEditingController();
@@ -24,31 +24,31 @@ class _UpdateProdukState extends State<UpdateProduk> {
 
   // Menampilkan produk berdasarkan ProdukID
   Future<void> TampilProduk() async {
-    try {
-      final response = await Supabase.instance.client
-          .from('produk')
-          .select()
-          .eq('ProdukID', widget.ProdukID)
-          .single();
+  try {
+    final response = await Supabase.instance.client
+        .from('produk')
+        .select()
+        .eq('ProdukID', widget.ProdukID)
+        .single();
 
-      if (response != null) {
-        throw Exception('Error fetching data: ${response}');
-      }
-
-      final data = response;
-      setState(() {
-        _nmp.text = data['NamaProduk'] ?? '';
-        _hrg.text = data['Harga']?.toString() ?? ''; // Pastikan data harga berbentuk string
-        _stk.text = data['Stok']?.toString() ?? ''; // Pastikan data stok berbentuk string
-      });
-    } catch (e) {
-      // Menangani error jika ada masalah dalam pengambilan data
-      print('Error: $e');
+    // Cek jika data tidak ditemukan
+    if (response == null) {
+      throw Exception('Data produk tidak ditemukan');
     }
+
+    setState(() {
+      _nmp.text = response['NamaProduk'] ?? '';
+      _hrg.text = response['Harga']?.toString() ?? '';
+      _stk.text = response['Stok']?.toString() ?? '';
+    });
+  } catch (e) {
+    print('Error: $e');
   }
+}
+
 
   // Fungsi untuk mengupdate produk
-  Future<void> UpdateProduk() async {
+  Future<void> UpdateProdukAdmin() async {
     if (_formKey.currentState!.validate()) {
       try {
         final response = await Supabase.instance.client
@@ -66,11 +66,12 @@ class _UpdateProdukState extends State<UpdateProduk> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Homepage()),
+          MaterialPageRoute(builder: (context) => HomePageAdmin()),
         );
       } catch (e) {
-        // Menangani error jika update gagal
-        print('Error updating product: $e');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePageAdmin()));
       }
     }
   }
@@ -152,7 +153,7 @@ class _UpdateProdukState extends State<UpdateProduk> {
 
               // Tombol Update
               ElevatedButton(
-                onPressed: UpdateProduk,
+                onPressed: UpdateProdukAdmin,
                 child: Text('Update'),
               ),
             ],

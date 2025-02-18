@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class DetailTab extends StatefulWidget {
-  const DetailTab({super.key});
+class IndexDetailAdmin extends StatefulWidget {
+  const IndexDetailAdmin({super.key});
 
   @override
-  State<DetailTab> createState() => _DetailTabState();
+  State<IndexDetailAdmin> createState() => _IndexDetailAdminState();
 }
 
-class _DetailTabState extends State<DetailTab> {
+class _IndexDetailAdminState extends State<IndexDetailAdmin> {
   List<Map<String, dynamic>> detailList = [];
   bool isLoading = true;
 

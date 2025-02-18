@@ -1,37 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:ukk_2025/homepage.dart';
+import 'package:ukk_2025/admin/homepageadmin.dart';
+import 'package:bcrypt/bcrypt.dart';
 
-class InsertUser extends StatefulWidget {
-  const InsertUser({super.key});
+class InsertUserAdmin extends StatefulWidget {
+  const InsertUserAdmin({super.key});
 
   @override
-  State<InsertUser> createState() => _InsertUserState();
+  State<InsertUserAdmin> createState() => _InsertUserAdminState();
 }
 
-class _InsertUserState extends State<InsertUser> {
+class _InsertUserAdminState extends State<InsertUserAdmin> {
   final _usr = TextEditingController();
   final _pw = TextEditingController();
   String _selectedRole = 'admin';  // Default selected role
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> insertUser() async {
-    if (_formKey.currentState!.validate()) {
-      final username = _usr.text.trim();
-      final password = _pw.text.trim();
-      final role = _selectedRole;
 
-      await Supabase.instance.client.from('user').insert({
-        'Username': username,
-        'Password': password,
-        'Role': role
-      });
+Future<void> InsertUserAdmin() async {
+  if (_formKey.currentState!.validate()) {
+    final username = _usr.text.trim();
+    final password = _pw.text.trim();
+    final role = _selectedRole;
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const Homepage()));
-    }
+    // Hash password sebelum menyimpan ke database
+    final hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+
+    await Supabase.instance.client.from('user').insert({
+      'Username': username,
+      'Password': hashedPassword,
+      'Role': role
+    });
+
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePageAdmin()));
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +117,7 @@ class _InsertUserState extends State<InsertUser> {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: insertUser,
+                onPressed: InsertUserAdmin,
                 child: const Text('Tambah'),
               ),
             ],

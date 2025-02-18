@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:ukk_2025/homepage.dart';
-
+import 'package:ukk_2025/admin/homepageadmin.dart';
+import 'package:bcrypt/bcrypt.dart';
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -13,36 +13,60 @@ class _LoginPageState extends State<LoginPage> {
   final _usr = TextEditingController();
   final _pw = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  
 
   Future<void> loginUser() async {
-    if (_formKey.currentState!.validate()) {
-      final username = _usr.text.trim();
-      final password = _pw.text.trim();
+  if (_formKey.currentState!.validate()) {
+    final username = _usr.text.trim();
+    final password = _pw.text.trim();
 
-      try {
-        final response = await Supabase.instance.client
-            .from('user')
-            .select('UserID, Username, Password')
-            .eq('Username', username)
-            .single();
+    try {
+      final response = await Supabase.instance.client
+          .from('user')
+          .select('UserID, Username, Password, Role')
+          .eq('Username', username)
+          .single();
 
-        if (response['Password'] != password) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Username atau password salah')),
+      if (response == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Username atau password tidak ditemukan')),
+        );
+        return;
+      }
+
+      final hashedPassword = response['Password'];
+
+      // Verifikasi password
+      if (BCrypt.checkpw(password, hashedPassword)) {
+        final role = response['Role'];
+        final userId = response['UserID'];
+
+        print('User ID: $userId');
+
+        if (role == 'admin') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePageAdmin()),
           );
+        } else if (role == 'petugas') {
+          // Tambahkan navigasi ke halaman petugas jika ada
         } else {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Homepage()));
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Login berhasil')),
+            const SnackBar(content: Text('Role tidak dikenal')),
           );
         }
-      } catch (e) {
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('error $e')),
+          const SnackBar(content: Text('Password salah')),
         );
       }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Terjadi kesalahan: $error')),
+      );
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {

@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:ukk_2025/admin/produk/HargaAdmin.dart';
 
-class PenjualanTab extends StatefulWidget {
-  const PenjualanTab({super.key});
+class IndexPenjualanAdmin extends StatefulWidget {
+  const IndexPenjualanAdmin({super.key});
 
   @override
-  State<PenjualanTab> createState() => _PenjualanTabState();
+  State<IndexPenjualanAdmin> createState() => _IndexPenjualanAdminState();
 }
 
-class _PenjualanTabState extends State<PenjualanTab> {
-  List<Map<String, dynamic>> Penjualan = [];
+class _IndexPenjualanAdminState extends State<IndexPenjualanAdmin> {
+  List<Map<String, dynamic>> penjualan = [];
   bool isLoading = true;
- 
+
   @override
   void initState() {
     super.initState();
@@ -27,17 +28,16 @@ class _PenjualanTabState extends State<PenjualanTab> {
       final response =
           await Supabase.instance.client.from('penjualan').select('*, pelanggan(*)');
       setState(() {
-        Penjualan = List<Map<String, dynamic>>.from(response);
+        penjualan = List<Map<String, dynamic>>.from(response);
         isLoading = false;
       });
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error fetching data: $e');
       setState(() {
         isLoading = false;
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -51,38 +51,37 @@ class _PenjualanTabState extends State<PenjualanTab> {
               children: [
                 Expanded(
                   child: ListView.builder(
-                    padding: EdgeInsets.all(8),
-                    itemCount: Penjualan.length,
+                    padding: const EdgeInsets.all(8),
+                    itemCount: penjualan.length,
                     itemBuilder: (context, index) {
-                      final pjl = Penjualan[index];
+                      final pjl = penjualan[index];
                       return Card(
                         elevation: 4,
-                        margin: EdgeInsets.symmetric(vertical: 8),
+                        margin: const EdgeInsets.symmetric(vertical: 8),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                         child: SizedBox(
                           height: 200,
                           child: Padding(
-                            padding: EdgeInsets.all(12),
+                            padding: const EdgeInsets.all(12),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   'Nama Pelanggan: ${pjl['pelanggan']['NamaPelanggan'] ?? 'tidak tersedia'}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.bold, fontSize: 18),
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 Text(
                                   'Tanggal Penjualan: ${pjl['TanggalPenjualan'] ?? 'tidak tersedia'}',
-                                  style: TextStyle(fontSize: 16),
+                                  style: const TextStyle(fontSize: 16),
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 Text(
                                   'Total Harga: ${pjl['TotalHarga'] ?? 'tidak tersedia'}',
-                                  style: TextStyle(fontSize: 16),
+                                  style: const TextStyle(fontSize: 16),
                                 ),
-                                
                               ],
                             ),
                           ),
@@ -93,7 +92,19 @@ class _PenjualanTabState extends State<PenjualanTab> {
                 ),
               ],
             ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          if (penjualan.isNotEmpty) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HargaProdukAdmin()
+              ),
+            );
+          }
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
- 
